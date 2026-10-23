@@ -51,7 +51,7 @@ export default function Command() {
           <Action.SubmitForm
             title="Open in Current Workspace"
             icon={Icon.Window}
-            shortcut={{ modifiers: ["cmd"], key: "return" }}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "return" }}
             onSubmit={async (values: Values) => {
               const dir = await chosenDir(values);
               if (dir) await openFolders([dir]);
