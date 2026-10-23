@@ -28,6 +28,34 @@
       "mode": "view"
     },
     {
+      "name": "open-file",
+      "title": "Open File in infiniterm",
+      "subtitle": "infiniterm",
+      "description": "Open the file selected in Finder as an editor card.",
+      "mode": "no-view"
+    },
+    {
+      "name": "open-diff",
+      "title": "Open Git Diff in infiniterm",
+      "subtitle": "infiniterm",
+      "description": "Show the git changes of the Finder selection (or the front Finder window's folder) as a diff card.",
+      "mode": "no-view"
+    },
+    {
+      "name": "open-settings",
+      "title": "Open infiniterm Settings File",
+      "subtitle": "infiniterm",
+      "description": "Open ~/.config/infiniterm/settings.json as an editor card.",
+      "mode": "no-view"
+    },
+    {
+      "name": "open-keybindings",
+      "title": "Open infiniterm Keybindings File",
+      "subtitle": "infiniterm",
+      "description": "Open ~/.config/infiniterm/keybindings.json as an editor card.",
+      "mode": "no-view"
+    },
+    {
       "name": "open-in-current-workspace",
       "title": "Open in infiniterm (Current Workspace)",
       "subtitle": "infiniterm",
