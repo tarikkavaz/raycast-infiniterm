@@ -49,11 +49,29 @@ The workspace list relies on `ift workspaces` and `ift terminal --workspace`, ad
 - The extension reads `ift --help` to see whether the verb exists. An older `ift` would treat `ift workspaces` as a file to open, so the extension never sends it.
 - The list then shows only "Current Workspace", which works with any `ift` that has `ift terminal`.
 
-To try the workspace picker before the release, build the PR branch and point the preference at that build:
+To try the workspace picker before the release, build the PR branch and run it as a scratch instance. `ift` finds the app's socket through the `INFINITERM_DATA_DIR` environment variable, and Raycast starts commands without your shell environment. Pointing **ift Path** straight at a debug build would therefore talk to your real app. A small wrapper script sets the variable for it.
 
-1. In the infiniterm checkout, build the branch: `cargo build -p infiniterm-cli`. This gives `target/debug/ift`.
-2. Launch the matching app with a scratch data directory, never on your real one: `INFINITERM_DATA_DIR=$(mktemp -d) <path to the built infiniterm>`.
-3. Set **ift Path** to the checkout's `target/debug/ift`.
+1. In the infiniterm checkout, build the branch: `cargo build -p infiniterm-cli`. This gives `target/debug/ift`. Build the app too, so the app and `ift` match.
+2. Make a scratch data directory and launch the built app on it, never on your real one:
+
+   ```sh
+   export SCRATCH=$HOME/infiniterm-scratch   # any empty directory
+   mkdir -p "$SCRATCH"
+   INFINITERM_DATA_DIR="$SCRATCH" <path to the built infiniterm> &
+   ```
+
+3. Create a wrapper script outside any repo, for example `$HOME/bin/ift-scratch`, and make it executable with `chmod +x`:
+
+   ```sh
+   #!/bin/sh
+   export INFINITERM_DATA_DIR="$HOME/infiniterm-scratch"
+   exec /path/to/infiniterm/target/debug/ift "$@"
+   ```
+
+   Use the same scratch directory as in step 2 and the real path of your checkout.
+4. Create a second workspace in the scratch app so the list has something to pick: `ift-scratch run workspace.new`.
+5. Set **ift Path** to the wrapper's absolute path, for example `/Users/you/bin/ift-scratch`.
+6. When done, set **ift Path** back to the default.
 
 The socket lock makes a second copy on the real data directory exit, and a test copy there could touch your canvas, so always use a scratch directory. To stop a scratch instance, find its pid from its socket and `kill` that pid. Do not use `pkill -f`, because the real app has the same binary name.
 
