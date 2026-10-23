@@ -1,0 +1,44 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { parseWorkspaces, terminalArgs } from "./parse.ts";
+
+test("parses tab separated rows and the active marker", () => {
+  const out = "w1\tmain\t3\t*\nw2\tnotes\t0\t-\n";
+  assert.deepEqual(parseWorkspaces(out), [
+    { id: "w1", name: "main", cards: 3, active: true },
+    { id: "w2", name: "notes", cards: 0, active: false },
+  ]);
+});
+
+test("skips blank lines and keeps names with spaces", () => {
+  assert.deepEqual(parseWorkspaces("\nw1\tmy work\t1\t-\n\n"), [
+    { id: "w1", name: "my work", cards: 1, active: false },
+  ]);
+});
+
+test("empty output is no workspaces", () => {
+  assert.deepEqual(parseWorkspaces(""), []);
+});
+
+test("terminal args always end flags with --", () => {
+  assert.deepEqual(terminalArgs(["/a", "/b"]), ["terminal", "--", "/a", "/b"]);
+  assert.deepEqual(terminalArgs(["/a"], "w1"), ["terminal", "--workspace", "w1", "--", "/a"]);
+});
+
+test("an older ift gets no --", () => {
+  assert.deepEqual(terminalArgs(["/a"], undefined, undefined, false), ["terminal", "/a"]);
+});
+
+test("name is sent only with a new workspace", () => {
+  assert.deepEqual(terminalArgs(["/a"], "new", " demo "), [
+    "terminal",
+    "--workspace",
+    "new",
+    "--name",
+    "demo",
+    "--",
+    "/a",
+  ]);
+  assert.deepEqual(terminalArgs(["/a"], "w1", "demo"), ["terminal", "--workspace", "w1", "--", "/a"]);
+  assert.deepEqual(terminalArgs(["/a"], "new", "  "), ["terminal", "--workspace", "new", "--", "/a"]);
+});

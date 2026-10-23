@@ -1,0 +1,61 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "infiniterm",
+  "title": "infiniterm",
+  "description": "Open Finder folders in infiniterm, in a workspace you pick or a new one.",
+  "icon": "icon.png",
+  "author": "tarik",
+  "categories": [
+    "Developer Tools"
+  ],
+  "license": "MIT",
+  "platforms": [
+    "macOS"
+  ],
+  "commands": [
+    {
+      "name": "open-in-infiniterm",
+      "title": "Open in infiniterm",
+      "subtitle": "infiniterm",
+      "description": "Open the Finder selection (or the front Finder window) in a workspace you choose, or a new one.",
+      "mode": "view"
+    },
+    {
+      "name": "open-in-current-workspace",
+      "title": "Open in infiniterm (Current Workspace)",
+      "subtitle": "infiniterm",
+      "description": "Open the Finder selection (or the front Finder window) on the workspace on screen.",
+      "mode": "no-view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "iftPath",
+      "type": "textfield",
+      "required": false,
+      "title": "ift Path",
+      "description": "Path to the ift binary. Raycast has a minimal PATH, so use an absolute path.",
+      "default": "/opt/homebrew/bin/ift",
+      "placeholder": "/opt/homebrew/bin/ift"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.104.0",
+    "@raycast/utils": "^2.2.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.0.4",
+    "@types/node": "22.13.10",
+    "@types/react": "19.0.10",
+    "eslint": "^9.22.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "test": "node --test src/lib/parse.test.ts"
+  }
+}
