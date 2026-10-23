@@ -6,6 +6,15 @@ Open Finder folders in [infiniterm](https://github.com/ekinertac/infiniterm) as 
 
 - **Open in infiniterm**: takes the folders selected in Finder (a selected file counts as its parent folder). With nothing selected it uses the front Finder window's folder, then the Desktop. It lists your workspaces plus "New Workspace" (with an optional name) and opens a terminal card per folder in the one you choose.
 - **Open in infiniterm (Current Workspace)**: the same folders, no picker, on the workspace on screen.
+- **New Terminal Card**: asks for a directory (home by default), then for a workspace. Cmd+Enter skips the picker and uses the workspace on screen.
+- **Open File in infiniterm**: the file selected in Finder as an editor card of its own.
+- **Open Git Diff in infiniterm**: the git changes of the Finder selection, or of the front Finder window's folder, as a diff card.
+- **Open infiniterm Settings File** and **Open infiniterm Keybindings File**: `~/.config/infiniterm/settings.json` and `keybindings.json` as editor cards. If you start the app with `INFINITERM_CONFIG_DIR`, these commands do not follow it.
+- **Send Text to Card**: pick a card from every card on the canvas, type a command or text, and send it to that card's shell without moving the focus. "Press Enter after the text" is on by default.
+
+The workspace picker remembers the last workspace you opened in and lists it first.
+
+Opening a file, a diff or the settings files starts infiniterm first if it is closed, and waits up to 30 seconds for it.
 
 If infiniterm is not running, `ift` starts it and waits up to 30 seconds.
 
