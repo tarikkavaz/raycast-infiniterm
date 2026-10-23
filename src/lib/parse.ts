@@ -19,6 +19,33 @@ export function parseWorkspaces(output: string): Workspace[] {
   return rows;
 }
 
+export type Card = {
+  id: string;
+  cwd: string;
+  state: string;
+  remote?: string;
+  number: number;
+};
+
+// `ift ls` into a pipe: id, group, cwd, state, remote, number, tab separated, no header.
+// "-" in the remote column means a local card.
+export function parseCards(output: string): Card[] {
+  const rows: Card[] = [];
+  for (const line of output.split("\n")) {
+    if (!line.trim()) continue;
+    const [id, , cwd, state, remote, number] = line.split("\t");
+    if (!id || cwd === undefined) continue;
+    rows.push({
+      id,
+      cwd,
+      state: state?.trim() || "none",
+      remote: remote && remote.trim() !== "-" ? remote.trim() : undefined,
+      number: Number.parseInt(number ?? "0", 10) || 0,
+    });
+  }
+  return rows;
+}
+
 // The last-used workspace first, the rest in their tab order. A stale id changes nothing.
 export function prioritize(workspaces: Workspace[], lastId?: string): Workspace[] {
   const last = workspaces.find((w) => w.id === lastId);

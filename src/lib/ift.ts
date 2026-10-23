@@ -2,7 +2,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { closeMainWindow, getPreferenceValues, showHUD } from "@raycast/api";
 import { showFailureToast } from "@raycast/utils";
-import { parseWorkspaces, terminalArgs, type Workspace } from "./parse.ts";
+import { parseCards, parseWorkspaces, terminalArgs, type Card, type Workspace } from "./parse.ts";
 
 const run = promisify(execFile);
 
@@ -99,6 +99,19 @@ export async function openFiles(paths: string[]): Promise<void> {
       for (const p of paths) await ift(["-n", p]);
     },
   );
+}
+
+// Every card on the canvas, across workspaces. Fails when the app is not running.
+export async function listCards(): Promise<Card[]> {
+  return parseCards(await ift(["ls"]));
+}
+
+// Types into a card's shell without moving the focus. The card is its id, which does not change
+// the way a card number can.
+export async function sendToCard(card: Card, text: string, enter: boolean): Promise<void> {
+  await perform(`Sent to card #${card.number}`, "Could not send to card", async () => {
+    await ift(["send", card.id, text, ...(enter ? ["--enter"] : [])]);
+  });
 }
 
 // Changes against git HEAD as a card; a file or a directory.

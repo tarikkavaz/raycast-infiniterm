@@ -56,6 +56,13 @@
       "mode": "no-view"
     },
     {
+      "name": "send-to-card",
+      "title": "Send Text to Card",
+      "subtitle": "infiniterm",
+      "description": "Type a command or text into a chosen terminal card without moving the focus.",
+      "mode": "view"
+    },
+    {
       "name": "open-in-current-workspace",
       "title": "Open in infiniterm (Current Workspace)",
       "subtitle": "infiniterm",

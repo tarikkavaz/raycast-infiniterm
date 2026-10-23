@@ -1,6 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseWorkspaces, prioritize, terminalArgs } from "./parse.ts";
+import { parseCards, parseWorkspaces, prioritize, terminalArgs } from "./parse.ts";
+
+test("parses ift ls rows, remote and number", () => {
+  const out = "id1\t-\t~/Work/a\tworking\t-\t4\nid2\tg1\t~/b\tnone\tuser@host\t12\n\n";
+  assert.deepEqual(parseCards(out), [
+    { id: "id1", cwd: "~/Work/a", state: "working", remote: undefined, number: 4 },
+    { id: "id2", cwd: "~/b", state: "none", remote: "user@host", number: 12 },
+  ]);
+});
+
+test("no cards is an empty list", () => {
+  assert.deepEqual(parseCards(""), []);
+});
 
 test("the last-used workspace moves first, the rest keep their order", () => {
   const ws = parseWorkspaces("a\tone\t1\t*\nb\ttwo\t1\t-\nc\tthree\t1\t-\n");
