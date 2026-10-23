@@ -63,6 +63,13 @@
       "mode": "view"
     },
     {
+      "name": "go-to-card",
+      "title": "Go to Card",
+      "subtitle": "infiniterm",
+      "description": "Pick a card from any workspace and bring it on screen. Needs an ift with the focus verb.",
+      "mode": "view"
+    },
+    {
       "name": "open-in-current-workspace",
       "title": "Open in infiniterm (Current Workspace)",
       "subtitle": "infiniterm",

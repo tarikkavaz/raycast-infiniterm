@@ -28,15 +28,18 @@ async function ift(args: string[], timeout = 10_000): Promise<string> {
   }
 }
 
-// An ift without the verb treats `ift workspaces` as a path and opens an editor card for it,
-// so ask the help text (local, no side effects) before sending it.
-async function supportsWorkspaces(): Promise<boolean> {
+// An ift without a verb treats `ift <verb>` as a path and opens an editor card for it,
+// so ask the help text (local, no side effects) before sending a verb that may be new.
+async function supportsVerb(verb: string): Promise<boolean> {
   try {
-    return /^\s*ift workspaces\b/m.test(await ift(["--help"]));
+    return new RegExp(`^\\s*ift ${verb}\\b`, "m").test(await ift(["--help"]));
   } catch {
     return false;
   }
 }
+
+const supportsWorkspaces = () => supportsVerb("workspaces");
+export const supportsFocus = () => supportsVerb("focus");
 
 // Fails when the app is not running or is too old to know the verb.
 export async function listWorkspaces(): Promise<Workspace[]> {
@@ -111,6 +114,16 @@ export async function listCards(): Promise<Card[]> {
 export async function sendToCard(card: Card, text: string, enter: boolean): Promise<void> {
   await perform(`Sent to card #${card.number}`, "Could not send to card", async () => {
     await ift(["send", card.id, text, ...(enter ? ["--enter"] : [])]);
+  });
+}
+
+// Switches to the card's workspace, focuses and fits it, then brings the app in front of other apps:
+// `ift focus` does not do that, bare `ift` does.
+export async function focusCard(card: Card): Promise<void> {
+  await perform(`Went to card #${card.number}`, "Could not go to card", async () => {
+    if (!(await supportsFocus())) throw new Error("This ift has no `focus` verb yet");
+    await ift(["focus", card.id]);
+    await ift([]);
   });
 }
 

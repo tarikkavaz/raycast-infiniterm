@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Form, Icon, showToast, Toast, useNavigation } from "@raycast/api";
+import { Action, ActionPanel, Form, Icon, Keyboard, showToast, Toast, useNavigation } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import { existsSync, statSync } from "node:fs";
 import { homedir } from "node:os";
@@ -51,7 +51,7 @@ export default function Command() {
           <Action.SubmitForm
             title="Open in Current Workspace"
             icon={Icon.Window}
-            shortcut={{ modifiers: ["cmd", "shift"], key: "o" }}
+            shortcut={Keyboard.Shortcut.Common.OpenWith}
             onSubmit={async (values: Values) => {
               const dir = await chosenDir(values);
               if (dir) await openFolders([dir]);
