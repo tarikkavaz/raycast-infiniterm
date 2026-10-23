@@ -21,6 +21,13 @@
       "mode": "view"
     },
     {
+      "name": "new-terminal-card",
+      "title": "New Terminal Card",
+      "subtitle": "infiniterm",
+      "description": "Open a new terminal card in a directory you choose (home by default), in a workspace you pick or a new one.",
+      "mode": "view"
+    },
+    {
       "name": "open-in-current-workspace",
       "title": "Open in infiniterm (Current Workspace)",
       "subtitle": "infiniterm",

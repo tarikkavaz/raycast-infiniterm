@@ -19,6 +19,12 @@ export function parseWorkspaces(output: string): Workspace[] {
   return rows;
 }
 
+// The last-used workspace first, the rest in their tab order. A stale id changes nothing.
+export function prioritize(workspaces: Workspace[], lastId?: string): Workspace[] {
+  const last = workspaces.find((w) => w.id === lastId);
+  return last ? [last, ...workspaces.filter((w) => w !== last)] : workspaces;
+}
+
 // Argument vector for `ift terminal`. `--` ends the flags; pass undefined for an ift that predates them.
 // `workspace` is a workspace id or the word "new"; `name` only applies to "new".
 export function terminalArgs(dirs: string[], workspace?: string, name?: string, endFlags = true): string[] {

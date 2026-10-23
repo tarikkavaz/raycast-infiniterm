@@ -1,6 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseWorkspaces, terminalArgs } from "./parse.ts";
+import { parseWorkspaces, prioritize, terminalArgs } from "./parse.ts";
+
+test("the last-used workspace moves first, the rest keep their order", () => {
+  const ws = parseWorkspaces("a\tone\t1\t*\nb\ttwo\t1\t-\nc\tthree\t1\t-\n");
+  assert.deepEqual(
+    prioritize(ws, "c").map((w) => w.id),
+    ["c", "a", "b"],
+  );
+});
+
+test("a stale or missing last id changes nothing", () => {
+  const ws = parseWorkspaces("a\tone\t1\t*\nb\ttwo\t1\t-\n");
+  assert.equal(prioritize(ws, "gone"), ws);
+  assert.equal(prioritize(ws), ws);
+});
 
 test("parses tab separated rows and the active marker", () => {
   const out = "w1\tmain\t3\t*\nw2\tnotes\t0\t-\n";
