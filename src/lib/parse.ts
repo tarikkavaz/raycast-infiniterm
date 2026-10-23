@@ -46,6 +46,24 @@ export function parseCards(output: string): Card[] {
   return rows;
 }
 
+// `~` and `~/x` to an absolute path; `ift ls` prints card directories with the home abbreviated.
+export function expandHome(path: string, home: string): string {
+  const p = path.trim();
+  if (p === "~") return home;
+  return p.startsWith("~/") ? home + p.slice(1) : p;
+}
+
+// Distinct card directories, most used first (a directory with several cards ranks higher).
+export function cardDirs(cards: Card[], home: string): string[] {
+  const counts = new Map<string, number>();
+  for (const c of cards) {
+    if (c.remote) continue;
+    const dir = expandHome(c.cwd, home);
+    counts.set(dir, (counts.get(dir) ?? 0) + 1);
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([dir]) => dir);
+}
+
 // The last-used workspace first, the rest in their tab order. A stale id changes nothing.
 export function prioritize(workspaces: Workspace[], lastId?: string): Workspace[] {
   const last = workspaces.find((w) => w.id === lastId);

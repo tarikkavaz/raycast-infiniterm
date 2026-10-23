@@ -1,6 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseCards, parseWorkspaces, prioritize, terminalArgs } from "./parse.ts";
+import { cardDirs, expandHome, parseCards, parseWorkspaces, prioritize, terminalArgs } from "./parse.ts";
+
+test("expands a leading tilde only", () => {
+  assert.equal(expandHome("~", "/Users/t"), "/Users/t");
+  assert.equal(expandHome(" ~/Work ", "/Users/t"), "/Users/t/Work");
+  assert.equal(expandHome("/a/~/b", "/Users/t"), "/a/~/b");
+  assert.equal(expandHome("~other", "/Users/t"), "~other");
+});
+
+test("card directories are distinct, local, and ranked by card count", () => {
+  const cards = parseCards(
+    "1\t-\t~/a\tnone\t-\t1\n2\t-\t~/b\tnone\t-\t2\n3\t-\t~/b\tnone\t-\t3\n4\t-\t/srv\tnone\tuser@h\t4\n",
+  );
+  assert.deepEqual(cardDirs(cards, "/Users/t"), ["/Users/t/b", "/Users/t/a"]);
+});
 
 test("parses ift ls rows, remote and number", () => {
   const out = "id1\t-\t~/Work/a\tworking\t-\t4\nid2\tg1\t~/b\tnone\tuser@host\t12\n\n";
