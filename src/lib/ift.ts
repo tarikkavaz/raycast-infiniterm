@@ -75,10 +75,13 @@ async function ensureRunning(): Promise<void> {
 async function perform(hud: string, failTitle: string, action: () => Promise<void>, activate = false): Promise<void> {
   await closeMainWindow({ clearRootSearch: true });
   try {
+    console.log(`[infiniterm] ${failTitle}: running`);
     await action();
     if (activate) await ift([]);
+    console.log(`[infiniterm] ${hud}`);
     await showHUD(hud);
   } catch (e) {
+    console.error(`[infiniterm] ${failTitle}:`, e);
     await showFailureToast(e, { title: failTitle });
   }
 }

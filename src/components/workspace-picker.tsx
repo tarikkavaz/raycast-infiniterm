@@ -5,17 +5,21 @@ import { prioritize } from "../lib/parse.ts";
 
 const LAST_WORKSPACE_KEY = "lastWorkspace";
 
-// Remembering the choice must never block opening the folder.
+// Remembering the choice must never block opening the folder. LocalStorage can hang rather than fail
+// (the dev log shows "localStorage is not available"), so the read has a timeout and the write is not awaited.
 async function lastWorkspace(): Promise<string | undefined> {
+  const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 1000));
   try {
-    return await LocalStorage.getItem<string>(LAST_WORKSPACE_KEY);
+    return await Promise.race([LocalStorage.getItem<string>(LAST_WORKSPACE_KEY), timeout]);
   } catch {
     return undefined;
   }
 }
 
 async function open(dirs: string[], workspace?: string, name?: string) {
-  if (workspace && workspace !== "new") await LocalStorage.setItem(LAST_WORKSPACE_KEY, workspace).catch(() => {});
+  if (workspace && workspace !== "new") {
+    void Promise.resolve(LocalStorage.setItem(LAST_WORKSPACE_KEY, workspace)).catch(() => {});
+  }
   await openFolders(dirs, workspace, name);
 }
 
@@ -45,10 +49,12 @@ export function WorkspacePicker({
   dirs,
   title,
   loading = false,
+  dirsError,
 }: {
   dirs: string[];
   title: string;
   loading?: boolean;
+  dirsError?: Error;
 }) {
   // Fails when the app is not running or predates `ift workspaces`; the list then offers the current workspace only.
   const {
@@ -62,6 +68,13 @@ export function WorkspacePicker({
 
   return (
     <List isLoading={loading || wsLoading} navigationTitle={`Open ${title}`}>
+      {!ready && !loading && (
+        <List.EmptyView
+          icon={Icon.ExclamationMark}
+          title="No folder found"
+          description={dirsError?.message ?? "Finder gave no selection or window folder."}
+        />
+      )}
       {ready && (
         <List.Section title={`Open ${title} in`} subtitle={dirs.length === 1 ? dirs[0] : undefined}>
           {!error && !wsLoading && (
