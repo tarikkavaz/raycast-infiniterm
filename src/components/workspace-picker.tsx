@@ -1,31 +1,13 @@
-import { Action, ActionPanel, Form, Icon, List, LocalStorage, useNavigation } from "@raycast/api";
+import { Action, ActionPanel, Form, Icon, List, useNavigation } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import { listWorkspaces, openFolders } from "../lib/ift.ts";
+import { readLastWorkspace, writeLastWorkspace } from "../lib/last-workspace.ts";
 import { prioritize } from "../lib/parse.ts";
-
-const LAST_WORKSPACE_KEY = "lastWorkspace";
-
-// Remembering the choice must never block opening the folder. LocalStorage can hang rather than fail
-// (the dev log shows "localStorage is not available"), so the read has a timeout and the write is not awaited.
-async function lastWorkspace(): Promise<string | undefined> {
-  const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 1000));
-  try {
-    return await Promise.race([LocalStorage.getItem<string>(LAST_WORKSPACE_KEY), timeout]);
-  } catch {
-    return undefined;
-  }
-}
 
 async function open(dirs: string[], workspace?: string, name?: string) {
   console.log("[infiniterm] open", { dirs, workspace, name });
-  if (workspace && workspace !== "new") {
-    // It can throw before returning a promise, so a .catch alone is not enough.
-    try {
-      void Promise.resolve(LocalStorage.setItem(LAST_WORKSPACE_KEY, workspace)).catch(() => {});
-    } catch {
-      // not remembered, the folder still opens
-    }
-  }
+  if (workspace && workspace !== "new") writeLastWorkspace(workspace);
+  console.log("[infiniterm] calling openFolders");
   await openFolders(dirs, workspace, name);
 }
 
@@ -67,7 +49,7 @@ export function WorkspacePicker({
     data,
     isLoading: wsLoading,
     error,
-  } = useCachedPromise(async () => prioritize(await listWorkspaces(), await lastWorkspace()), [], {
+  } = useCachedPromise(async () => prioritize(await listWorkspaces(), readLastWorkspace()), [], {
     keepPreviousData: false,
   });
   const ready = dirs.length > 0;
