@@ -4,12 +4,12 @@ Open Finder folders in [infiniterm](https://github.com/ekinertac/infiniterm) as 
 
 ## Commands
 
-- **Open in infiniterm**: takes the folders selected in Finder (a selected file counts as its parent folder). With nothing selected it uses the front Finder window's folder, then the Desktop. It lists your workspaces plus "New Workspace" (with an optional name) and opens a terminal card per folder in the one you choose.
-- **Open in infiniterm (Current Workspace)**: the same folders, no picker, on the workspace on screen.
+- **Open in Infiniterm**: takes the folders selected in Finder (a selected file counts as its parent folder). With nothing selected it uses the front Finder window's folder, then the Desktop. It lists your workspaces plus "New Workspace" (with an optional name) and opens a terminal card per folder in the one you choose.
+- **Open in Infiniterm (Current Workspace)**: the same folders, no picker, on the workspace on screen.
 - **New Terminal Card**: asks for a directory (home by default), then for a workspace. Cmd+Enter continues to the workspace picker, and Cmd+Shift+O skips it and uses the workspace on screen. Enter alone does not submit a form.
-- **Open File in infiniterm**: the file selected in Finder as an editor card of its own.
-- **Open Git Diff in infiniterm**: the git changes of the Finder selection, or of the front Finder window's folder, as a diff card.
-- **Open infiniterm Settings File** and **Open infiniterm Keybindings File**: `~/.config/infiniterm/settings.json` and `keybindings.json` as editor cards. If you start the app with `INFINITERM_CONFIG_DIR`, these commands do not follow it.
+- **Open File in Infiniterm**: the file selected in Finder as an editor card of its own.
+- **Open Git Diff in Infiniterm**: the git changes of the Finder selection, or of the front Finder window's folder, as a diff card.
+- **Open Infiniterm Settings File** and **Open Infiniterm Keybindings File**: `~/.config/infiniterm/settings.json` and `keybindings.json` as editor cards. If you start the app with `INFINITERM_CONFIG_DIR`, these commands do not follow it.
 - **Go to Card**: pick a card from any workspace and bring it on screen: its workspace is shown, the card focused and fitted, and infiniterm brought to the front. Needs an infiniterm release with `ift focus` ([ekinertac/infiniterm#553](https://github.com/ekinertac/infiniterm/pull/553)); on an older `ift` the command says so and sends nothing.
 - **Send Text to Card**: pick a card from every card on the canvas, type a command or text, and send it to that card's shell without moving the focus. "Press Enter after the text" is on by default.
 
