@@ -21,6 +21,7 @@ function reason(e: unknown): Error {
 }
 
 async function ift(args: string[], timeout = 10_000): Promise<string> {
+  console.log("[infiniterm] ift", iftPath(), args);
   try {
     return (await run(iftPath(), args, { timeout })).stdout;
   } catch (e) {
@@ -73,9 +74,13 @@ async function ensureRunning(): Promise<void> {
 // `activate` brings infiniterm in front afterwards: the verbs that open a card do not, so with Finder in front
 // the new card would appear behind it and nothing would seem to happen. Bare `ift` focuses the running app.
 async function perform(hud: string, failTitle: string, action: () => Promise<void>, activate = false): Promise<void> {
-  await closeMainWindow({ clearRootSearch: true });
+  console.log(`[infiniterm] perform: ${hud}`);
+  // Do not let the window closing gate the work: if it never settles, nothing would run and nothing would show.
+  await Promise.race([closeMainWindow({ clearRootSearch: true }), new Promise((r) => setTimeout(r, 1500))]).catch((e) =>
+    console.error("[infiniterm] closeMainWindow:", e),
+  );
+  console.log("[infiniterm] window closed, running");
   try {
-    console.log(`[infiniterm] ${failTitle}: running`);
     await action();
     if (activate) await ift([]);
     console.log(`[infiniterm] ${hud}`);

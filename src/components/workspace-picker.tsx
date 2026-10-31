@@ -17,8 +17,14 @@ async function lastWorkspace(): Promise<string | undefined> {
 }
 
 async function open(dirs: string[], workspace?: string, name?: string) {
+  console.log("[infiniterm] open", { dirs, workspace, name });
   if (workspace && workspace !== "new") {
-    void Promise.resolve(LocalStorage.setItem(LAST_WORKSPACE_KEY, workspace)).catch(() => {});
+    // It can throw before returning a promise, so a .catch alone is not enough.
+    try {
+      void Promise.resolve(LocalStorage.setItem(LAST_WORKSPACE_KEY, workspace)).catch(() => {});
+    } catch {
+      // not remembered, the folder still opens
+    }
   }
   await openFolders(dirs, workspace, name);
 }
