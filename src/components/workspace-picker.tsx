@@ -5,9 +5,7 @@ import { readLastWorkspace, writeLastWorkspace } from "../lib/last-workspace.ts"
 import { prioritize } from "../lib/parse.ts";
 
 async function open(dirs: string[], workspace?: string, name?: string) {
-  console.log("[infiniterm] open", { dirs, workspace, name });
   if (workspace && workspace !== "new") writeLastWorkspace(workspace);
-  console.log("[infiniterm] calling openFolders");
   await openFolders(dirs, workspace, name);
 }
 

@@ -1,7 +1,6 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { closeMainWindow, getPreferenceValues, showHUD } from "@raycast/api";
-import { showFailureToast } from "@raycast/utils";
+import { getPreferenceValues, showHUD, showToast, Toast } from "@raycast/api";
 import { parseCards, parseWorkspaces, terminalArgs, type Card, type Workspace } from "./parse.ts";
 
 const run = promisify(execFile);
@@ -21,7 +20,6 @@ function reason(e: unknown): Error {
 }
 
 async function ift(args: string[], timeout = 10_000): Promise<string> {
-  console.log("[infiniterm] ift", iftPath(), args);
   try {
     return (await run(iftPath(), args, { timeout })).stdout;
   } catch (e) {
@@ -70,24 +68,22 @@ async function ensureRunning(): Promise<void> {
   throw new Error("infiniterm did not start");
 }
 
-// The window closes first so a slow app start never leaves Raycast hanging; the result comes back as a HUD or toast.
+// The work runs while the Raycast window is still open, behind a toast: a view command's process can be torn down
+// once its window closes, which dropped everything queued after closeMainWindow. showHUD closes the window itself
+// when the work is done; on failure the toast turns red and the window stays open.
 // `activate` brings infiniterm in front afterwards: the verbs that open a card do not, so with Finder in front
 // the new card would appear behind it and nothing would seem to happen. Bare `ift` focuses the running app.
 async function perform(hud: string, failTitle: string, action: () => Promise<void>, activate = false): Promise<void> {
-  console.log(`[infiniterm] perform: ${hud}`);
-  // Do not let the window closing gate the work: if it never settles, nothing would run and nothing would show.
-  await Promise.race([closeMainWindow({ clearRootSearch: true }), new Promise((r) => setTimeout(r, 1500))]).catch((e) =>
-    console.error("[infiniterm] closeMainWindow:", e),
-  );
-  console.log("[infiniterm] window closed, running");
+  const toast = await showToast({ style: Toast.Style.Animated, title: "Opening in infiniterm…" });
   try {
     await action();
     if (activate) await ift([]);
-    console.log(`[infiniterm] ${hud}`);
     await showHUD(hud);
   } catch (e) {
     console.error(`[infiniterm] ${failTitle}:`, e);
-    await showFailureToast(e, { title: failTitle });
+    toast.style = Toast.Style.Failure;
+    toast.title = failTitle;
+    toast.message = e instanceof Error ? e.message : String(e);
   }
 }
 
