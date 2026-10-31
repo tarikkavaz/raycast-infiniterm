@@ -63,6 +63,13 @@
       "mode": "view"
     },
     {
+      "name": "run-saved-command",
+      "title": "Run Saved Command in Card",
+      "subtitle": "Infiniterm",
+      "description": "Save commands once, then send one to any terminal card. Add, edit and delete them here.",
+      "mode": "view"
+    },
+    {
       "name": "go-to-card",
       "title": "Go to Card",
       "subtitle": "Infiniterm",
@@ -105,6 +112,6 @@
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "test": "node --test src/lib/parse.test.ts"
+    "test": "node --test src/lib/parse.test.ts src/lib/saved.test.ts"
   }
 }

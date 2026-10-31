@@ -11,6 +11,7 @@ Open Finder folders in [infiniterm](https://github.com/ekinertac/infiniterm) as 
 - **Open Git Diff in Infiniterm**: the git changes of the Finder selection, or of the front Finder window's folder, as a diff card.
 - **Open Infiniterm Settings File** and **Open Infiniterm Keybindings File**: `~/.config/infiniterm/settings.json` and `keybindings.json` as editor cards. If you start the app with `INFINITERM_CONFIG_DIR`, these commands do not follow it.
 - **Go to Card**: pick a card from any workspace and bring it on screen: its workspace is shown, the card focused and fitted, and infiniterm brought to the front. Needs an infiniterm release with `ift focus` ([ekinertac/infiniterm#553](https://github.com/ekinertac/infiniterm/pull/553)); on an older `ift` the command says so and sends nothing.
+- **Run Saved Command in Card**: keep a list of commands you send often. Cmd+N adds one (a name, the command, and whether to press Enter), Cmd+E edits, Ctrl+X deletes. Enter on a saved command lets you choose the card to send it to. The list is stored in `saved-commands.json` in the extension's support directory, so it stays on your Mac.
 - **Send Text to Card**: pick a card from every card on the canvas, type a command or text, and send it to that card's shell without moving the focus. "Press Enter after the text" is on by default.
 
 The workspace picker remembers the last workspace you opened in and lists it first.
