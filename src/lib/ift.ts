@@ -70,10 +70,13 @@ async function ensureRunning(): Promise<void> {
 }
 
 // The window closes first so a slow app start never leaves Raycast hanging; the result comes back as a HUD or toast.
-async function perform(hud: string, failTitle: string, action: () => Promise<void>): Promise<void> {
+// `activate` brings infiniterm in front afterwards: the verbs that open a card do not, so with Finder in front
+// the new card would appear behind it and nothing would seem to happen. Bare `ift` focuses the running app.
+async function perform(hud: string, failTitle: string, action: () => Promise<void>, activate = false): Promise<void> {
   await closeMainWindow({ clearRootSearch: true });
   try {
     await action();
+    if (activate) await ift([]);
     await showHUD(hud);
   } catch (e) {
     await showFailureToast(e, { title: failTitle });
@@ -89,6 +92,7 @@ export async function openFolders(dirs: string[], workspace?: string, name?: str
       const newIft = await supportsWorkspaces();
       await ift(terminalArgs(dirs, workspace, name, newIft), LAUNCH_TIMEOUT_MS);
     },
+    true,
   );
 }
 
@@ -101,6 +105,7 @@ export async function openFiles(paths: string[]): Promise<void> {
       await ensureRunning();
       for (const p of paths) await ift(["-n", p]);
     },
+    true,
   );
 }
 
@@ -129,8 +134,13 @@ export async function focusCard(card: Card): Promise<void> {
 
 // Changes against git HEAD as a card; a file or a directory.
 export async function openDiffs(paths: string[]): Promise<void> {
-  await perform("Opened diff in infiniterm", "Could not open diff in infiniterm", async () => {
-    await ensureRunning();
-    for (const p of paths) await ift(["diff", p]);
-  });
+  await perform(
+    "Opened diff in infiniterm",
+    "Could not open diff in infiniterm",
+    async () => {
+      await ensureRunning();
+      for (const p of paths) await ift(["diff", p]);
+    },
+    true,
+  );
 }
